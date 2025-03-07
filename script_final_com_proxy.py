@@ -3,10 +3,10 @@ import re
 import urllib.parse
 import time
 
-# Configuração do proxy
+# Configuração do proxy para escutar no Burp Suite (127.0.0.1:8080)
 proxies = {
     "http": "http://127.0.0.1:8080",
-    "https": "http://127.0.0.1:8080"
+    "https": "http://127.0.0.1:8080"  # Mantemos mesmo para HTTPS, mas desativamos SSL verify
 }
 
 # URL base da primeira requisição
@@ -34,8 +34,8 @@ while True:
     session = requests.Session()
     session.proxies.update(proxies)
 
-    # Realizando a primeira requisição via proxy
-    response1 = session.get(url1, headers=headers1)
+    # Desativando a verificação SSL
+    response1 = session.get(url1, headers=headers1, verify=False)
 
     # Capturando o cookie ak_bmsc
     akcookie = session.cookies.get("ak_bmsc")
@@ -70,7 +70,7 @@ while True:
         "meta": {"resolution": "1920x1080"}
     }
 
-    response2 = session.post(url2, headers=headers2, json=payload2)
+    response2 = session.post(url2, headers=headers2, json=payload2, verify=False)
 
     # Capturando o novo cookie
     cookie_jfe3 = session.cookies.get("9Wr0SLdEGMbV5zHWGkVu5AslQexqxRQlvDk31%2FcRqhc%3D")
@@ -97,7 +97,8 @@ while True:
                 "Referer": "https://bancocarrefourcx.qualtrics.com/jfe/form/SV_086DabUpWp3iY8m",
                 "Accept-Encoding": "gzip, deflate, br"
             },
-            json=req
+            json=req,
+            verify=False  # Desativando a verificação SSL
         )
 
         # Se for a última requisição, verificar a resposta
@@ -114,7 +115,7 @@ while True:
 #    print(f"session_id: {session_id}")
 #    print(f"client_id: {client_id}")
 #    print(f"cached: {cached}")
-#   print(f"cached_encoded: {cached_encoded}")
+#    print(f"cached_encoded: {cached_encoded}")
 #    print(f"cookie_jfe3: {cookie_jfe3}")
 
     # Delay de 0.5 segundos antes do próximo ciclo
